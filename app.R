@@ -4,47 +4,13 @@
 library(tidyverse)
 library(shiny)
 library(shinyWidgets)
-library(fresh)
+library(shinycssloaders)
 
 # Dados Carregados -----
 
 source("Obtencao_Dados.R")
 
-# Aparência ----
-
-# create_theme(
-#     theme = "default",
-#     bs_vars_navbar(
-#         default_bg = "#3f2d54",
-#         default_color = "#FFFFFF",
-#         default_link_color = "#FFFFFF",
-#         default_link_active_color = "#FFFFFF"
-#     ),
-#     bs_vars_color(
-#         gray_base = "#354e5c",
-#         brand_primary = "#75b8d1",
-#         brand_success = "#c9d175",
-#         brand_info = "#758bd1",
-#         brand_warning = "#d1ab75",
-#         brand_danger = "#d175b8"
-#     ),
-#     bs_vars_state(
-#         success_text = "#FFF",
-#         success_bg = "#c9d175",
-#         success_border = "#c9d175",
-#         info_text = "#FFF",
-#         info_bg = "#3f2d54",
-#         info_border = "#3f2d54",
-#         danger_text = "#FFF",
-#         danger_bg = "#d175b8",
-#         danger_border = "#d175b8"
-#     ),
-#     bs_vars_wells(
-#         bg = "#FFF",
-#         border = "#3f2d54"
-#     ),
-#     output_file = "www/mytheme.css"
-# )
+# Aplicativo ----
 
 ui <- fluidPage(
 
@@ -78,9 +44,12 @@ ui <- fluidPage(
             )
         ),
 
-        # Show a plot of the generated distribution
         mainPanel(
-           tableOutput("titulo")
+            
+            withSpinner(uiOutput("imagem")),
+            
+            span(textOutput("titulo"), style = "font-size:30px; font-style: bold; font-weight: bolder;"),
+            
         )
     )
 )
@@ -105,16 +74,23 @@ server <- function(input, output) {
 
     })
 
-    output$titulo <- renderTable({
+    output$titulo <- renderText({
         
         if (input$start == FALSE) return()
         
-        episodio()
+        paste0("S0", episodio() %>% pull(temp),
+               "EP", episodio() %>% pull(Episode),
+               " - Título = ", episodio() %>% pull(Title))
 
     })
     
-    # output$imagem <- render({})
+    output$imagem <- renderUI({
+
+        if (input$start == FALSE) return()
+
+        tags$img(src = episodio() %>% pull(imagem), style = "margin-left: 100px; width: 500px")
+
+    })
 }
 
-# Run the application 
 shinyApp(ui = ui, server = server)

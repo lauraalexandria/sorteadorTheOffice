@@ -10,12 +10,12 @@ poster_geral <- geral$Poster
 num_temp <- as.numeric(geral$totalSeasons)
 
 ####### TAREFAS ########
-# 1. Como vou arrumar com as imagens?
 # 2. Qual o pacote que mostra imagens mesmo?
 # 3. Faço o esforço de adicionar os episódios faltantes?
 # 4. Pensar em Inputs de letras bonitas
 # 5. Coloco alguma música?
 # 6. Não esquecer da logo do DunderMifflin
+# 7. Colocar uma imagem inicial antes
 
 temporada1 <- fromJSON(paste(url2, 1, sep = ''))$Episodes
 temporada2 <- fromJSON(paste(url2, 2, sep = ''))$Episodes
@@ -49,10 +49,7 @@ geral <- rbind(temporada1 %>% mutate(temp = "1"),
                temporada8 %>% mutate(temp = "8"), 
                temporada9 %>% mutate(temp = "9"))
 
-tamanhos <- c(dim(geral)[1])
-for (i in 1:9){
-  tamanhos <- c(tamanhos, dim(geral %>% filter(temp == i))[1])
-}
+geral <- geral %>% left_join(imagens)
 
 
 
